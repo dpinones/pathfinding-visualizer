@@ -1,4 +1,14 @@
+  import {
+    Contract,
+    defaultProvider,
+    Provider,
+  } from "starknet";
+
 export function astar(grid, startNode, finishNode) {
+
+  //
+  get_starknet();
+  //
   if (!startNode || !finishNode || startNode === finishNode) {
     return false;
   }
@@ -71,4 +81,41 @@ export function getNodesInShortestPathOrderAstar(finishNode) {
     currentNode = currentNode.previousNode;
   }
   return nodesInShortestPathOrder;
+}
+
+async function get_starknet(){
+  const provider = new Provider()
+
+  const erc20Address = "0x05b4fc161748ddada82bd1c72b6323ee203a6ebf400ac2acdb068f541aff2e03";
+  // const contractJson = JSON.parse("./abi/main_abi.json")
+  const abi = [
+      {
+          "inputs": [],
+          "name": "root",
+          "outputs": [
+              {
+                  "name": "root",
+                  "type": "felt"
+              }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+      },
+      {
+          "inputs": [
+              {
+                  "name": "root",
+                  "type": "felt"
+              }
+          ],
+          "name": "set_merkle_root",
+          "outputs": [],
+          "type": "function"
+      }
+  ];
+  
+  const erc20 = new Contract(abi, erc20Address, provider);
+  const balanceBeforeTransfer = await erc20.root();
+  console.log("Balance before transfer: ", balanceBeforeTransfer.root.toString());
+
 }

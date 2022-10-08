@@ -36,15 +36,23 @@ import { recursiveDivisionMaze } from "../mazeAlgorithms/recursiveDivision";
 import { verticalMaze } from "../mazeAlgorithms/verticalMaze";
 import { horizontalMaze } from "../mazeAlgorithms/horizontalMaze";
 
-const initialNum = getInitialNum(window.innerWidth, window.innerHeight);
-const initialNumRows = initialNum[0];
-const initialNumColumns = initialNum[1];
+// const initialNum = getInitialNum(window.innerWidth, window.innerHeight);
+// const initialNumRows = initialNum[0];
+// const initialNumColumns = initialNum[1];
 
-const startFinishNode = getStartFinishNode(initialNumRows, initialNumColumns);
-const startNodeRow = startFinishNode[0];
-const startNodeCol = startFinishNode[1];
-const finishNodeRow = startFinishNode[2];
-const finishNodeCol = startFinishNode[3];
+const initialNumRows = 12;
+const initialNumColumns = 12;
+
+// const startFinishNode = getStartFinishNode(initialNumRows, initialNumColumns);
+// const startNodeRow = startFinishNode[0];
+// const startNodeCol = startFinishNode[1];
+// const finishNodeRow = startFinishNode[2];
+// const finishNodeCol = startFinishNode[3];
+
+const startNodeRow = 1;
+const startNodeCol = 1;
+const finishNodeRow = 10;
+const finishNodeCol = 10;
 
 class PathfindingVisualizer extends Component {
   state = {
