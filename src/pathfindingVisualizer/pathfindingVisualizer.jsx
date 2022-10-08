@@ -5,6 +5,9 @@ import NavBar from "./navbar";
 
 //Pathfinding Algorithms
 import {
+  jps
+} from "./starknet/jps";
+import {
   dijkstra,
   getNodesInShortestPathOrderDijkstra,
 } from "../pathfindingAlgorithms/dijkstra";
@@ -286,7 +289,7 @@ class PathfindingVisualizer extends Component {
     }, this.state.speed);
   }
 
-  visualizeAStar() {
+  visualizeJPS() {
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
       return;
     }
@@ -295,13 +298,15 @@ class PathfindingVisualizer extends Component {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
       const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = astar(grid, startNode, finishNode);
+      const visitedNodesInOrder = jps(startNodeRow, startNodeCol, finishNodeRow, finishNodeCol, grid, initialNumRows, initialNumColumns);
+      console.log('visitedNodesInOrder: ', visitedNodesInOrder);
+      // const visitedNodesInOrder = astar(grid, startNode, finishNode);
       const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(
         finishNode
       );
       this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
     }, this.state.speed);
-  }
+}
 
   visualizeBFS() {
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
@@ -486,7 +491,7 @@ class PathfindingVisualizer extends Component {
           visualizingAlgorithm={this.state.visualizingAlgorithm}
           generatingMaze={this.state.generatingMaze}
           visualizeDijkstra={this.visualizeDijkstra.bind(this)}
-          visualizeAStar={this.visualizeAStar.bind(this)}
+          visualizeJPS={this.visualizeJPS.bind(this)}
           visualizeGreedyBFS={this.visualizeGreedyBFS.bind(this)}
           visualizeBidirectionalGreedySearch={this.visualizeBidirectionalGreedySearch.bind(
             this
@@ -756,7 +761,7 @@ export default PathfindingVisualizer;
 Dijkstra's
 </button>
 &nbsp;
-<button className="button" onClick={() => this.visualizeAStar()}>
+<button className="button" onClick={() => this.visualizeJPS()}>
 A Star
 </button>
 &nbsp;

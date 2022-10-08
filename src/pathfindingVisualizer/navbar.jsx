@@ -65,8 +65,8 @@ class NavBar extends Component {
       this.setState({ pathState: true });
       if (this.state.algorithm === "Visualize Dijkstra")
         this.props.visualizeDijkstra();
-      else if (this.state.algorithm === "Visualize A*")
-        this.props.visualizeAStar();
+      else if (this.state.algorithm === "Visualize JPS")
+        this.props.visualizeJPS();
       else if (this.state.algorithm === "Visualize Greedy BFS")
         this.props.visualizeGreedyBFS();
       else if (this.state.algorithm === "Visualize Bidirectional Greedy")
@@ -176,28 +176,28 @@ class NavBar extends Component {
                   Algorithms
                 </button>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  <button
+                  {/* <button
                     className="dropdown-item btn-light"
                     type="button"
                     onClick={() => this.selectAlgorithm("Visualize Dijkstra")}
                   >
                     Dijkstra's Algorithm
-                  </button>
+                  </button> */}
                   <button
                     className="dropdown-item btn-light"
                     type="button"
-                    onClick={() => this.selectAlgorithm("Visualize A*")}
+                    onClick={() => this.selectAlgorithm("Visualize JPS")}
                   >
-                    A* Algorithm
+                    JPS
                   </button>
-                  <button
+                  {/* <button
                     className="dropdown-item btn-light"
                     type="button"
                     onClick={() => this.selectAlgorithm("Visualize Greedy BFS")}
                   >
                     Greedy Best First Search
-                  </button>
-                  <button
+                  </button> */}
+                  {/* <button
                     className="dropdown-item btn-light"
                     type="button"
                     onClick={() =>
@@ -205,8 +205,8 @@ class NavBar extends Component {
                     }
                   >
                     Bidirectional Greedy Search
-                  </button>
-                  <div className="dropdown-divider"></div>
+                  </button> */}
+                  {/* <div className="dropdown-divider"></div>
                   <button
                     className="dropdown-item btn-light"
                     type="button"
@@ -233,7 +233,7 @@ class NavBar extends Component {
                     }
                   >
                     Random Walk
-                  </button>
+                  </button> */}
                 </div>
               </div>{" "}
             </li>
