@@ -17,6 +17,9 @@ export async function jps(startX, startY, endX, endY, grid, gridWidth, gridHeigh
     if(!pathFinderResult){
         return [];
     } else {
+        if(pathFinderResult[0] == 0){
+            return [];
+        }
         const parsedResult = pathFinderResult[0].map(element => {
             return {
                 row: element.y.toString(),

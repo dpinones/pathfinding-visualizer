@@ -301,10 +301,13 @@ class PathfindingVisualizer extends Component {
       const finishNode = grid[finishNodeRow][finishNodeCol];
       jps(startNodeRow, startNodeCol, finishNodeRow, finishNodeCol, grid, initialNumRows, initialNumColumns)
       .then((visitedNodesInOrder) => {
-        console.log(visitedNodesInOrder);
-        this.animateShortestPath(
-          visitedNodesInOrder
-        );
+        if(visitedNodesInOrder.length > 0 ){
+          this.animateShortestPath(
+            visitedNodesInOrder
+          );
+        } else {
+          this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
+        }
       })
       .catch((err) => {
         console.log(err);
