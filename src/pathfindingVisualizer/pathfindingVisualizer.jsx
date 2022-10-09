@@ -151,17 +151,18 @@ class PathfindingVisualizer extends Component {
   }
 
   animateShortestPath = (nodesInShortestPathOrder, visitedNodesInOrder) => {
+    console.log("visitedNodesInOrder: ", visitedNodesInOrder);
     if (nodesInShortestPathOrder.length === 1)
       this.setState({ visualizingAlgorithm: false });
     for (let i = 1; i < nodesInShortestPathOrder.length; i++) {
       if (i === nodesInShortestPathOrder.length - 1) {
         setTimeout(() => {
-          let newGrid = updateNodesForRender(
-            this.state.grid,
-            nodesInShortestPathOrder,
-            visitedNodesInOrder
-          );
-          this.setState({ grid: newGrid, visualizingAlgorithm: false });
+          // let newGrid = updateNodesForRender(
+          //   this.state.grid,
+          //   nodesInShortestPathOrder,
+          //   visitedNodesInOrder
+          // );
+          this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
         }, i * (3 * this.state.speed));
         return;
       }
@@ -298,13 +299,16 @@ class PathfindingVisualizer extends Component {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
       const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = jps(startNodeRow, startNodeCol, finishNodeRow, finishNodeCol, grid, initialNumRows, initialNumColumns);
-      console.log('visitedNodesInOrder: ', visitedNodesInOrder);
-      // const visitedNodesInOrder = astar(grid, startNode, finishNode);
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(
-        finishNode
-      );
-      this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
+      jps(startNodeRow, startNodeCol, finishNodeRow, finishNodeCol, grid, initialNumRows, initialNumColumns)
+      .then((visitedNodesInOrder) => {
+        console.log(visitedNodesInOrder);
+        this.animateShortestPath(
+          visitedNodesInOrder
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });            
     }, this.state.speed);
 }
 

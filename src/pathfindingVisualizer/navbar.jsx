@@ -305,7 +305,7 @@ class NavBar extends Component {
                 className="btn btn-danger"
                 onClick={() => this.clearGrid()}
               >
-                Clear Gird
+                Clear Grid
               </button>
             </li>
             <li className="nav-item dropdown">
