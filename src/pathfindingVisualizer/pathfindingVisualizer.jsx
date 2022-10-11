@@ -11,6 +11,8 @@ import { randomMaze } from "../mazeAlgorithms/randomMaze";
 import { recursiveDivisionMaze } from "../mazeAlgorithms/recursiveDivision";
 import { verticalMaze } from "../mazeAlgorithms/verticalMaze";
 import { horizontalMaze } from "../mazeAlgorithms/horizontalMaze";
+import loading from '../assets/preview.gif'
+import resolved from '../assets/resolved.gif'
 
 // const initialNum = getInitialNum(window.innerWidth, window.innerHeight);
 // const initialNumRows = initialNum[0];
@@ -42,6 +44,8 @@ class PathfindingVisualizer extends Component {
     numColumns: initialNumColumns,
     speed: 10,
     mazeSpeed: 10,
+    isLoading: false,
+    resolved: false,
   };
 
   updateDimensions = () => {
@@ -78,6 +82,7 @@ class PathfindingVisualizer extends Component {
   }
 
   clearGrid() {
+    this.setState({ resolved: false });
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
       return;
     }
@@ -249,11 +254,14 @@ class PathfindingVisualizer extends Component {
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
       return;
     }
+    this.setState({ resolved: false });
     this.setState({ visualizingAlgorithm: true });
     setTimeout(() => {
+      this.setState({ isLoading: true });
       const { grid } = this.state;
       jps(startNodeCol, startNodeRow, finishNodeCol, finishNodeRow, grid, initialNumColumns, initialNumRows)
       .then((visitedNodesInOrder) => {
+        this.setState({ isLoading: false });
         if(visitedNodesInOrder.length > 0 ){
           // armar camino
           
@@ -288,7 +296,9 @@ class PathfindingVisualizer extends Component {
           this.animateShortestPath(
             path
           );
+          this.setState({ resolved: true });
         } else {
+          alert("Path not found :(");
           this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
         }
       })
@@ -331,6 +341,7 @@ isInside = (x, y) => {
       return;
     }
     this.setState({ generatingMaze: true });
+    this.setState({ resolved: false });
     setTimeout(() => {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
@@ -400,6 +411,10 @@ isInside = (x, y) => {
           clearPath={this.clearPath.bind(this)}
           updateSpeed={this.updateSpeed.bind(this)}
         />
+        {this.state.isLoading && <div><img src={loading} 
+        style={{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '5%', height: '5%'}}/></div>}
+        {this.state.resolved && <div><img src={resolved} 
+          style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/></div>}
         <div
           className={
             this.state.visualizingAlgorithm || this.state.generatingMaze
@@ -443,10 +458,13 @@ isInside = (x, y) => {
                   );
                 })}
               </div>
+              
             );
+            
           })}
-        </div>
-      </React.Fragment>
+         </div>
+         </React.Fragment>
+      
     );
   }
 }

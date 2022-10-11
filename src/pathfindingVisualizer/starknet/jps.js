@@ -3,16 +3,15 @@ import {
     Provider,
     } from "starknet";
 
+import JPSAbi from '../abi/main_abi.json'
+
 export async function jps(startX, startY, endX, endY, grid, gridWidth, gridHeight) {
     const arr = convertGridToPoints(grid).map(element => String(element));
     
     const provider = new Provider();
-    const pathFinderAddress = "0x030edd0a62ac24437c8a9af9a2768092623b2939a4e48642e4a38caeed865577";
-    // const contractJson = JSON.parse("./abi/main_abi.json")
-    const abi = [{"members":[{"name":"x","offset":0,"type":"felt"},{"name":"y","offset":1,"type":"felt"},{"name":"walkable","offset":2,"type":"felt"}],"name":"Point","size":3,"type":"struct"},{"inputs":[{"name":"start_x","type":"felt"},{"name":"start_y","type":"felt"},{"name":"end_x","type":"felt"},{"name":"end_y","type":"felt"},{"name":"grids_len","type":"felt"},{"name":"grids","type":"felt*"},{"name":"width","type":"felt"},{"name":"height","type":"felt"}],"name":"path_finder","outputs":[{"name":"points_len","type":"felt"},{"name":"points","type":"Point*"}],"stateMutability":"view","type":"function"}];
-    
-    const erc20 = new Contract(abi, pathFinderAddress, provider);
-    const pathFinderResult = await erc20.path_finder(String(startX), String(startY), String(endX), String(endY), arr, String(gridWidth), String(gridHeight));
+    const pathFinderAddress = "0x04cdb56f4057b6ccbb2c859fccd0abce3983008365bdfbffd9b27f957946fce6";
+    const pathFinder = new Contract(JPSAbi, pathFinderAddress, provider);
+    const pathFinderResult = await pathFinder.path_finder(String(startX), String(startY), String(endX), String(endY), arr, String(gridWidth), String(gridHeight));
     if(!pathFinderResult){
         return [];
     } else {
