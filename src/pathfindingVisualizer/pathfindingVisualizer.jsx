@@ -303,7 +303,9 @@ class PathfindingVisualizer extends Component {
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ isLoading: false });
+        alert("Error call Starknet :(");
+        this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
       });            
     }, this.state.speed);
 }
