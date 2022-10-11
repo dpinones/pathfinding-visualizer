@@ -18,11 +18,7 @@ class Node extends Component {
       isShortest,
       onMouseEnter,
       onMouseDown,
-      onMouseUp,
-      width,
-      height,
-      numRows,
-      numColumns,
+      onMouseUp
     } = this.props;
 
     const extraClass = isStart
@@ -36,18 +32,6 @@ class Node extends Component {
       : isVisited
       ? "node node-visited"
       : "node";
-
-    // let cellWidth = Math.floor((width - 15) / numColumns);
-    // let cellHeight;
-    // if (width > 1500) {
-    //   cellHeight = Math.floor((height - 70) / numRows);
-    // } else if (width > 1000) {
-    //   cellHeight = Math.floor((height - 70) / numRows);
-    // } else if (width > 500) {
-    //   cellHeight = Math.floor((height - 60) / numRows);
-    // } else if (width > 0) {
-    //   cellHeight = Math.floor((height - 50) / numRows);
-    // }
 
     let cellWidth = 30;
     let cellHeight = 30;

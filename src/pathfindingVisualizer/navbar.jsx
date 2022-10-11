@@ -63,20 +63,8 @@ class NavBar extends Component {
       this.setState({ algorithm: "Select an Algorithm!" });
     } else {
       this.setState({ pathState: true });
-      if (this.state.algorithm === "Visualize Dijkstra")
-        this.props.visualizeDijkstra();
-      else if (this.state.algorithm === "Visualize JPS")
+      if (this.state.algorithm === "Visualize JPS")
         this.props.visualizeJPS();
-      else if (this.state.algorithm === "Visualize Greedy BFS")
-        this.props.visualizeGreedyBFS();
-      else if (this.state.algorithm === "Visualize Bidirectional Greedy")
-        this.props.visualizeBidirectionalGreedySearch();
-      else if (this.state.algorithm === "Visualize Breadth First Search")
-        this.props.visualizeBFS();
-      else if (this.state.algorithm === "Visualize Depth First Search")
-        this.props.visualizeDFS();
-      else if (this.state.algorithm === "Visualize Random Walk")
-        this.props.visualizeRandomWalk();
     }
   }
 

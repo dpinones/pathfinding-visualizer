@@ -4,34 +4,7 @@ import Node from "./Node/node";
 import NavBar from "./navbar";
 
 //Pathfinding Algorithms
-import {
-  jps
-} from "./starknet/jps";
-import {
-  dijkstra,
-  getNodesInShortestPathOrderDijkstra,
-} from "../pathfindingAlgorithms/dijkstra";
-import {
-  astar,
-  getNodesInShortestPathOrderAstar,
-} from "../pathfindingAlgorithms/astar";
-import {
-  breadthFirstSearch,
-  getNodesInShortestPathOrderBFS,
-} from "../pathfindingAlgorithms/breadthFirstSearch";
-import {
-  depthFirstSearch,
-  getNodesInShortestPathOrderDFS,
-} from "../pathfindingAlgorithms/depthFirstSearch";
-import { randomWalk } from "../pathfindingAlgorithms/randomWalk";
-import {
-  greedyBFS,
-  getNodesInShortestPathOrderGreedyBFS,
-} from "../pathfindingAlgorithms/greedyBestFirstSearch";
-import {
-  bidirectionalGreedySearch,
-  getNodesInShortestPathOrderBidirectionalGreedySearch,
-} from "../pathfindingAlgorithms/bidirectionalGreedySearch";
+import { jps } from "./starknet/jps";
 
 //Maze Algorithms
 import { randomMaze } from "../mazeAlgorithms/randomMaze";
@@ -43,8 +16,8 @@ import { horizontalMaze } from "../mazeAlgorithms/horizontalMaze";
 // const initialNumRows = initialNum[0];
 // const initialNumColumns = initialNum[1];
 
-const initialNumRows = 12;
-const initialNumColumns = 12;
+const initialNumRows = 10;
+const initialNumColumns = 20;
 
 // const startFinishNode = getStartFinishNode(initialNumRows, initialNumColumns);
 // const startNodeRow = startFinishNode[0];
@@ -54,8 +27,8 @@ const initialNumColumns = 12;
 
 const startNodeRow = 1;
 const startNodeCol = 1;
-const finishNodeRow = 10;
-const finishNodeCol = 10;
+const finishNodeRow = 8;
+const finishNodeCol = 18;
 
 class PathfindingVisualizer extends Component {
   state = {
@@ -151,7 +124,6 @@ class PathfindingVisualizer extends Component {
   }
 
   animateShortestPath = (nodesInShortestPathOrder, visitedNodesInOrder) => {
-    console.log("visitedNodesInOrder: ", visitedNodesInOrder);
     if (nodesInShortestPathOrder.length === 1)
       this.setState({ visualizingAlgorithm: false });
     for (let i = 1; i < nodesInShortestPathOrder.length; i++) {
@@ -273,23 +245,6 @@ class PathfindingVisualizer extends Component {
     }
   }
 
-  visualizeDijkstra() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderDijkstra(
-        finishNode
-      );
-      this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-    }, this.state.speed);
-  }
-
   visualizeJPS() {
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
       return;
@@ -297,13 +252,41 @@ class PathfindingVisualizer extends Component {
     this.setState({ visualizingAlgorithm: true });
     setTimeout(() => {
       const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      jps(startNodeRow, startNodeCol, finishNodeRow, finishNodeCol, grid, initialNumRows, initialNumColumns)
+      jps(startNodeCol, startNodeRow, finishNodeCol, finishNodeRow, grid, initialNumColumns, initialNumRows)
       .then((visitedNodesInOrder) => {
         if(visitedNodesInOrder.length > 0 ){
+          // armar camino
+          
+          const path = [];
+          for (let i = 0; i < visitedNodesInOrder.length - 1; i++) {
+            const elem1 = visitedNodesInOrder[i];
+            path.push(elem1);
+
+            const elem2 = visitedNodesInOrder[i + 1];
+            let x = Number(elem1.col);
+            let y = Number(elem1.row);
+            // get the normalized direction of travel
+            const dx = (elem2.col - elem1.col) / Math.max(Math.abs(elem2.col - elem1.col), 1);
+            const dy = (elem2.row - elem1.row) / Math.max(Math.abs(elem2.row - elem1.row), 1);
+            while((x != elem2.col || y != elem2.row)) {
+                if (dx != 0 && dy != 0) {
+                  if (this.isWalkableAt(x, y + dy)) {
+                      path.push({col: String(x), row: String((y + dy))});
+                  } else {
+                      path.push({col: String((x + dx)), row: String(y)});
+                  }
+                  path.push({col: String((x + dx)), row: String((y + dy))});
+                } else if(y != elem2.row && dx == 0) {
+                  path.push({col: String(x), row: String((y + dy))});
+                } else if (x != elem2.col){
+                  path.push({col: String((x + dx)), row: String(y)});
+                }
+                x += dx;
+                y += dy;
+            }
+          }
           this.animateShortestPath(
-            visitedNodesInOrder
+            path
           );
         } else {
           this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
@@ -315,104 +298,13 @@ class PathfindingVisualizer extends Component {
     }, this.state.speed);
 }
 
-  visualizeBFS() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = breadthFirstSearch(
-        grid,
-        startNode,
-        finishNode
-      );
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderBFS(
-        finishNode
-      );
-      this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-    }, this.state.speed);
-  }
+isWalkableAt = (x, y) => {
+  return this.isInside(x, y) && !this.state.grid[y][x].isWall;
+};
 
-  visualizeDFS() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = depthFirstSearch(grid, startNode, finishNode);
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderDFS(
-        finishNode
-      );
-      this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-    }, this.state.speed);
-  }
-
-  visualizeRandomWalk() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = randomWalk(grid, startNode, finishNode);
-      this.animateRandomWalk(visitedNodesInOrder);
-    }, this.state.speed);
-  }
-
-  visualizeGreedyBFS() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = greedyBFS(grid, startNode, finishNode);
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderGreedyBFS(
-        finishNode
-      );
-      this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
-    }, this.state.speed);
-  }
-
-  visualizeBidirectionalGreedySearch() {
-    if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
-      return;
-    }
-    this.setState({ visualizingAlgorithm: true });
-    setTimeout(() => {
-      const { grid } = this.state;
-      const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
-      const visitedNodesInOrder = bidirectionalGreedySearch(
-        grid,
-        startNode,
-        finishNode
-      );
-      const visitedNodesInOrderStart = visitedNodesInOrder[0];
-      const visitedNodesInOrderFinish = visitedNodesInOrder[1];
-      const isShortedPath = visitedNodesInOrder[2];
-      const nodesInShortestPathOrder = getNodesInShortestPathOrderBidirectionalGreedySearch(
-        visitedNodesInOrderStart[visitedNodesInOrderStart.length - 1],
-        visitedNodesInOrderFinish[visitedNodesInOrderFinish.length - 1]
-      );
-      this.animateBidirectionalAlgorithm(
-        visitedNodesInOrderStart,
-        visitedNodesInOrderFinish,
-        nodesInShortestPathOrder,
-        isShortedPath
-      );
-    }, this.state.speed);
-  }
+isInside = (x, y) => {
+  return (x >= 0 && x < this.state.width) && (y >= 0 && y < this.state.height);
+};
 
   animateMaze = (walls) => {
     for (let i = 0; i <= walls.length; i++) {
@@ -497,15 +389,7 @@ class PathfindingVisualizer extends Component {
         <NavBar
           visualizingAlgorithm={this.state.visualizingAlgorithm}
           generatingMaze={this.state.generatingMaze}
-          visualizeDijkstra={this.visualizeDijkstra.bind(this)}
           visualizeJPS={this.visualizeJPS.bind(this)}
-          visualizeGreedyBFS={this.visualizeGreedyBFS.bind(this)}
-          visualizeBidirectionalGreedySearch={this.visualizeBidirectionalGreedySearch.bind(
-            this
-          )}
-          visualizeBFS={this.visualizeBFS.bind(this)}
-          visualizeDFS={this.visualizeDFS.bind(this)}
-          visualizeRandomWalk={this.visualizeRandomWalk.bind(this)}
           generateRandomMaze={this.generateRandomMaze.bind(this)}
           generateRecursiveDivisionMaze={this.generateRecursiveDivisionMaze.bind(
             this
@@ -565,81 +449,6 @@ class PathfindingVisualizer extends Component {
       </React.Fragment>
     );
   }
-}
-
-function getInitialNum(width, height) {
-  let numColumns;
-  if (width > 1500) {
-    numColumns = Math.floor(width / 25);
-  } else if (width > 1250) {
-    numColumns = Math.floor(width / 22.5);
-  } else if (width > 1000) {
-    numColumns = Math.floor(width / 20);
-  } else if (width > 750) {
-    numColumns = Math.floor(width / 17.5);
-  } else if (width > 500) {
-    numColumns = Math.floor(width / 15);
-  } else if (width > 250) {
-    numColumns = Math.floor(width / 12.5);
-  } else if (width > 0) {
-    numColumns = Math.floor(width / 10);
-  }
-  let cellWidth = Math.floor(width / numColumns);
-  let numRows = Math.floor(height / cellWidth);
-  return [numRows, numColumns];
-}
-
-function getRandomNums(num) {
-  let randomNums1 = [];
-  let temp = 2;
-  for (let i = 5; i < num / 2; i += 2) {
-    randomNums1.push(temp);
-    temp += 2;
-  }
-  let randomNums2 = [];
-  temp = -2;
-  for (let i = num / 2; i < num - 5; i += 2) {
-    randomNums2.push(temp);
-    temp -= 2;
-  }
-  return [randomNums1, randomNums2];
-}
-
-function getStartFinishNode(numRows, numColumns) {
-  let randomNums;
-  let x;
-  let y;
-  let startNodeRow;
-  let startNodeCol;
-  let finishNodeRow;
-  let finishNodeCol;
-  if (numRows < numColumns) {
-    randomNums = getRandomNums(numRows);
-    x = Math.floor(numRows / 2);
-    y = Math.floor(numColumns / 4);
-    if (x % 2 !== 0) x -= 1;
-    if (y % 2 !== 0) y += 1;
-    startNodeRow =
-      x + randomNums[1][Math.floor(Math.random() * randomNums[1].length)];
-    startNodeCol = y + [-6, -4, -2, 0][Math.floor(Math.random() * 4)];
-    finishNodeRow =
-      x + randomNums[0][Math.floor(Math.random() * randomNums[0].length)];
-    finishNodeCol =
-      numColumns - y + [0, 2, 4, 6][Math.floor(Math.random() * 4)];
-  } else {
-    randomNums = getRandomNums(numColumns);
-    x = Math.floor(numRows / 4);
-    y = Math.floor(numColumns / 2);
-    if (x % 2 !== 0) x -= 1;
-    if (y % 2 !== 0) y += 1;
-    startNodeRow = x + [-6, -4, -2, 0][Math.floor(Math.random() * 4)];
-    startNodeCol =
-      y + randomNums[1][Math.floor(Math.random() * randomNums[1].length)];
-    finishNodeRow = numRows - x + [0, 2, 4, 6][Math.floor(Math.random() * 4)];
-    finishNodeCol =
-      y + randomNums[0][Math.floor(Math.random() * randomNums[0].length)];
-  }
-  return [startNodeRow, startNodeCol, finishNodeRow, finishNodeCol];
 }
 
 const getInitialGrid = (numRows, numColumns) => {
@@ -711,37 +520,6 @@ const getGridWithoutPath = (grid) => {
   return newGrid;
 };
 
-const updateNodesForRender = (
-  grid,
-  nodesInShortestPathOrder,
-  visitedNodesInOrder
-) => {
-  let newGrid = grid.slice();
-  for (let node of visitedNodesInOrder) {
-    if (
-      (node.row === startNodeRow && node.col === startNodeCol) ||
-      (node.row === finishNodeRow && node.col === finishNodeCol)
-    )
-      continue;
-    let newNode = {
-      ...node,
-      isVisited: true,
-    };
-    newGrid[node.row][node.col] = newNode;
-  }
-  for (let node of nodesInShortestPathOrder) {
-    if (node.row === finishNodeRow && node.col === finishNodeCol) {
-      return newGrid;
-    }
-    let newNode = {
-      ...node,
-      isVisited: false,
-      isShortest: true,
-    };
-    newGrid[node.row][node.col] = newNode;
-  }
-};
-
 const getVisitedNodesInOrder = (
   visitedNodesInOrderStart,
   visitedNodesInOrderFinish
@@ -763,64 +541,3 @@ const getVisitedNodesInOrder = (
 };
 
 export default PathfindingVisualizer;
-
-/* <button className="button" onClick={() => this.visualizeDijkstra()}>
-Dijkstra's
-</button>
-&nbsp;
-<button className="button" onClick={() => this.visualizeJPS()}>
-A Star
-</button>
-&nbsp;
-<button className="button" onClick={() => this.visualizeBFS()}>
-Breadth First Search
-</button>
-&nbsp;
-<button className="button" onClick={() => this.visualizeDFS()}>
-Depth First Search
-</button>
-&nbsp;
-<button className="button" onClick={() => this.visualizeRandomWalk()}>
-Random Walk
-</button>
-&nbsp;
-<button className="button" onClick={() => this.clearGrid()}>
-Clear Grid
-</button>
-<br />
-<button className="button" onClick={() => this.visualizeGreedyBFS()}>
-Greedy Best First Search
-</button>
-&nbsp;
-<button
-className="button"
-onClick={() => this.visualizeBidirectionalGreedySearch()}
->
-Bidirectional Best First Search
-</button>
-&nbsp;
-<button className="button" onClick={() => this.generateRandomMaze()}>
-Random Maze
-</button>
-&nbsp;
-<button
-className="button"
-onClick={() => this.generateRecursiveDivisionMaze()}
->
-Recursive Division
-</button>
-&nbsp;
-<button
-className="button"
-onClick={() => this.generateVerticalMaze()}
->
-Vertical Maze
-</button>
-&nbsp;
-<button
-className="button"
-onClick={() => this.generateHorizontalMaze()}
->
-Horizontal Maze
-</button>
- */

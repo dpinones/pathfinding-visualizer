@@ -116,6 +116,5 @@ async function get_starknet(){
   
   const erc20 = new Contract(abi, erc20Address, provider);
   const balanceBeforeTransfer = await erc20.root();
-  console.log("Balance before transfer: ", balanceBeforeTransfer.root.toString());
 
 }

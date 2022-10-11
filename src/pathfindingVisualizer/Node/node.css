@@ -86,7 +86,7 @@
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);
-    background-color: rgb(255, 0, 255);
+    background-color: rgb(0, 170, 255);
     border-radius: 100%;
   }
 
@@ -98,7 +98,7 @@
 
   75% {
     transform: scale(0.7);
-    background-color: rgba(20, 110, 140, 0.75);
+    background-color: rgba(20, 111, 197, 0.75);
     border-radius: 50%;
   }
 
@@ -111,25 +111,25 @@
 @keyframes shortestPathAnimation {
   0% {
     transform: scale(0.3);
-    background-color: rgba(255, 0, 255, 0.75);
+    background-color: rgba(0, 170, 255, 0.75);
     border-radius: 100%;
   }
 
   50% {
     transform: scale(0.5);
-    background-color: rgba(255, 0, 255, 0.75);
+    background-color: rgba(0, 170, 255, 0.75);
     border-radius: 75%;
   }
 
   75% {
     transform: scale(0.7);
-    background-color: rgba(255, 0, 255, 0.75);
+    background-color: rgba(0, 170, 255, 0.75);
     border-radius: 50%;
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(255, 0, 255, 0.75);
+    background-color: rgba(0, 170, 255, 0.75);
   }
 }
 
