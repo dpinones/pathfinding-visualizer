@@ -5,7 +5,7 @@ const brand = window.innerWidth > 600 ? "Pathfinding Visualizer" : "Pathfinder";
 
 class NavBar extends Component {
   state = {
-    algorithm: "Visualize Algorithm",
+    algorithm: "Run JPS ",
     maze: "Generate Maze",
     pathState: false,
     mazeState: false,
@@ -56,16 +56,7 @@ class NavBar extends Component {
       this.clearTemp();
       return;
     }
-    if (
-      this.state.algorithm === "Visualize Algorithm" ||
-      this.state.algorithm === "Select an Algorithm!"
-    ) {
-      this.setState({ algorithm: "Select an Algorithm!" });
-    } else {
-      this.setState({ pathState: true });
-      if (this.state.algorithm === "Visualize JPS")
-        this.props.visualizeJPS();
-    }
+    this.props.visualizeJPS();
   }
 
   generateMaze() {
@@ -99,7 +90,7 @@ class NavBar extends Component {
     }
     this.props.clearGrid();
     this.setState({
-      algorithm: "Visualize Algorithm",
+      algorithm: "Run JPS",
       maze: "Generate Maze",
       pathState: false,
       mazeState: false,
@@ -152,7 +143,7 @@ class NavBar extends Component {
         <div className="navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
-              <div className="dropdown">
+              {/* <div className="dropdown">
                 <button
                   className="btn btn-light dropdown-toggle"
                   type="button"
@@ -164,13 +155,6 @@ class NavBar extends Component {
                   Algorithms
                 </button>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  {/* <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() => this.selectAlgorithm("Visualize Dijkstra")}
-                  >
-                    Dijkstra's Algorithm
-                  </button> */}
                   <button
                     className="dropdown-item btn-light"
                     type="button"
@@ -178,52 +162,8 @@ class NavBar extends Component {
                   >
                     JPS
                   </button>
-                  {/* <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() => this.selectAlgorithm("Visualize Greedy BFS")}
-                  >
-                    Greedy Best First Search
-                  </button> */}
-                  {/* <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() =>
-                      this.selectAlgorithm("Visualize Bidirectional Greedy")
-                    }
-                  >
-                    Bidirectional Greedy Search
-                  </button> */}
-                  {/* <div className="dropdown-divider"></div>
-                  <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() =>
-                      this.selectAlgorithm("Visualize Breadth First Search")
-                    }
-                  >
-                    Breadth First Search
-                  </button>
-                  <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() =>
-                      this.selectAlgorithm("Visualize Depth First Search")
-                    }
-                  >
-                    Depth First Search
-                  </button>
-                  <button
-                    className="dropdown-item btn-light"
-                    type="button"
-                    onClick={() =>
-                      this.selectAlgorithm("Visualize Random Walk")
-                    }
-                  >
-                    Random Walk
-                  </button> */}
                 </div>
-              </div>{" "}
+              </div>{" "} */}
             </li>
             <li>
               <button
@@ -333,6 +273,23 @@ class NavBar extends Component {
                 </div>
               </div>{" "}
             </li>
+
+            <li>
+              <font
+                color="#FFFFFF">
+                Width: 
+              </font>
+              <input className="btn btn-light dropdown-toggle" placeholder="5-30" type="number" onChange={e => this.props.handleNumColumns(e.target.value)}/>
+            </li>
+
+            <li>
+            <font
+                color="#FFFFFF">
+                Height: 
+              </font>
+              <input className="btn btn-light dropdown-toggle" placeholder="5-30"  type="number"  onChange={e => this.props.handleNumRows(e.target.value)}/>
+            </li>
+
           </ul>
         </div>
       </nav>

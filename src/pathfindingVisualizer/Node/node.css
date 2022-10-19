@@ -1,17 +1,17 @@
 .node {
   width: var(--width);
   height: var(--height);
-  border: 1px solid rgb(175, 216, 248);
+  border: 1px solid rgb(146, 146, 146);
   /*   outline: 0.2px solid rgb(175, 216, 248); */
   display: inline-block;
 }
 
 .node-start {
-  background-color: green;
+  background-color: rgb(150, 216, 130);
 }
 
 .node-finish {
-  background-color: red;
+  background-color: rgb(255, 105, 105);
 }
 
 .node-finish-reached {
@@ -51,6 +51,14 @@
 
 .node-shortest-path {
   animation-name: shortestPathAnimation;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-direction: alternate;
+  animation-fill-mode: forwards;
+}
+
+.node-shortest-jp {
+  animation-name: shortestPathAnimationJP;
   animation-duration: 0.5s;
   animation-timing-function: ease-out;
   animation-direction: alternate;
@@ -108,28 +116,53 @@
   }
 }
 
-@keyframes shortestPathAnimation {
+@keyframes shortestPathAnimationJP {
   0% {
     transform: scale(0.3);
-    background-color: rgba(0, 170, 255, 0.75);
+    background-color: rgba(187, 40, 255, 0.9);
     border-radius: 100%;
   }
 
   50% {
     transform: scale(0.5);
-    background-color: rgba(0, 170, 255, 0.75);
+    background-color: rgba(187, 40, 255, 0.9);
     border-radius: 75%;
   }
 
   75% {
     transform: scale(0.7);
-    background-color: rgba(0, 170, 255, 0.75);
+    background-color: rgba(187, 40, 255, 0.9);
     border-radius: 50%;
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(0, 170, 255, 0.75);
+    background-color: rgba(187, 40, 255, 0.9);
+  }
+}
+
+@keyframes shortestPathAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(227, 167, 255, 0.9);
+    border-radius: 100%;
+  }
+
+  50% {
+    transform: scale(0.5);
+    background-color: rgba(227, 167, 255, 0.9);
+    border-radius: 75%;
+  }
+
+  75% {
+    transform: scale(0.7);
+    background-color: rgba(227, 167, 255, 0.9);
+    border-radius: 50%;
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba(227, 167, 255, 0.9);
   }
 }
 

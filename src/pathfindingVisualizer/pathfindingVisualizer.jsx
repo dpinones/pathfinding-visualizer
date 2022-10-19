@@ -14,25 +14,14 @@ import { horizontalMaze } from "../mazeAlgorithms/horizontalMaze";
 import loading from '../assets/preview.gif'
 import resolved from '../assets/resolved.gif'
 
-// const initialNum = getInitialNum(window.innerWidth, window.innerHeight);
-// const initialNumRows = initialNum[0];
-// const initialNumColumns = initialNum[1];
-
-const initialNumRows = 10;
-const initialNumColumns = 20;
-
-// const startFinishNode = getStartFinishNode(initialNumRows, initialNumColumns);
-// const startNodeRow = startFinishNode[0];
-// const startNodeCol = startFinishNode[1];
-// const finishNodeRow = startFinishNode[2];
-// const finishNodeCol = startFinishNode[3];
+const initialNumRows = 15;
+const initialNumColumns = 15;
 
 const startNodeRow = 1;
 const startNodeCol = 1;
-const finishNodeRow = 8;
-const finishNodeCol = 18;
 
 class PathfindingVisualizer extends Component {
+
   state = {
     grid: [],
     mouseIsPressed: false,
@@ -81,6 +70,53 @@ class PathfindingVisualizer extends Component {
     this.setState({ mouseIsPressed: false });
   }
 
+  handleNumRows = (value) => {
+    
+    if(value >= 5 && value <= 30){
+      console.log("handleNumRows:", value);
+      this.setState(
+          {numRows: value}
+        ,
+        () => {
+          console.log("this.state.numRows: ", this.state.numRows);
+          console.log("this.state.numColumns: ", this.state.numColumns);
+
+          const grid = getInitialGrid(this.state.numRows, this.state.numColumns);
+          this.setState({ grid });
+          this.clearGrid();
+          this.setState({
+            algorithm: "Run JPS",
+            maze: "Generate Maze",
+            pathState: false,
+            mazeState: false,
+          });
+        });
+    }
+  }
+
+  handleNumColumns(value) {
+    
+    if(value >= 5 && value <= 30){
+      console.log("handleNumColumns:", value);
+      this.setState(
+            {numColumns: value}
+          , () => {
+            const grid = getInitialGrid(this.state.numRows, this.state.numColumns);
+            this.setState({ grid });
+            this.clearGrid();
+            this.setState({
+              algorithm: "Run JPS",
+              maze: "Generate Maze",
+              pathState: false,
+              mazeState: false,
+            });
+          }
+      );
+      
+    }
+
+  }
+
   clearGrid() {
     this.setState({ resolved: false });
     if (this.state.visualizingAlgorithm || this.state.generatingMaze) {
@@ -91,7 +127,7 @@ class PathfindingVisualizer extends Component {
         if (
           !(
             (row === startNodeRow && col === startNodeCol) ||
-            (row === finishNodeRow && col === finishNodeCol)
+            (row === this.state.numRows - 2 && col === this.state.numColumns - 2)
           )
         ) {
           document.getElementById(`node-${row}-${col}`).className = "node";
@@ -146,8 +182,12 @@ class PathfindingVisualizer extends Component {
       let node = nodesInShortestPathOrder[i];
       setTimeout(() => {
         //shortest path node
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-shortest-path";
+        if(node.jp){
+          document.getElementById(`node-${node.row}-${node.col}`).className = "node node-shortest-jp";
+        } else {
+          document.getElementById(`node-${node.row}-${node.col}`).className = "node node-shortest-path";
+        }
+
       }, i * (3 * this.state.speed));
     }
   };
@@ -259,7 +299,7 @@ class PathfindingVisualizer extends Component {
     setTimeout(() => {
       this.setState({ isLoading: true });
       const { grid } = this.state;
-      jps(startNodeCol, startNodeRow, finishNodeCol, finishNodeRow, grid, initialNumColumns, initialNumRows)
+      jps(startNodeCol, startNodeRow, this.state.numColumns - 2, this.state.numRows - 2, grid, this.state.numColumns, this.state.numRows)
       .then((visitedNodesInOrder) => {
         this.setState({ isLoading: false });
         if(visitedNodesInOrder.length > 0 ){
@@ -268,6 +308,7 @@ class PathfindingVisualizer extends Component {
           const path = [];
           for (let i = 0; i < visitedNodesInOrder.length - 1; i++) {
             const elem1 = visitedNodesInOrder[i];
+            elem1.jp = true;
             path.push(elem1);
 
             const elem2 = visitedNodesInOrder[i + 1];
@@ -303,6 +344,7 @@ class PathfindingVisualizer extends Component {
         }
       })
       .catch((err) => {
+        console.log(err);
         this.setState({ isLoading: false });
         alert("Error call Starknet :(");
         this.setState({ grid: this.state.grid, visualizingAlgorithm: false });
@@ -347,7 +389,7 @@ isInside = (x, y) => {
     setTimeout(() => {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
+      const finishNode = grid[this.state.numRows - 2][this.state.numColumns - 2];
       const walls = randomMaze(grid, startNode, finishNode);
       this.animateMaze(walls);
     }, this.state.mazeSpeed);
@@ -361,7 +403,7 @@ isInside = (x, y) => {
     setTimeout(() => {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
+      const finishNode = grid[this.state.numRows - 2][this.state.numColumns - 2];
       const walls = recursiveDivisionMaze(grid, startNode, finishNode);
       this.animateMaze(walls);
     }, this.state.mazeSpeed);
@@ -375,7 +417,7 @@ isInside = (x, y) => {
     setTimeout(() => {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
+      const finishNode = grid[this.state.numRows - 2][this.state.numColumns - 2];
       const walls = verticalMaze(grid, startNode, finishNode);
       this.animateMaze(walls);
     }, this.state.mazeSpeed);
@@ -389,7 +431,7 @@ isInside = (x, y) => {
     setTimeout(() => {
       const { grid } = this.state;
       const startNode = grid[startNodeRow][startNodeCol];
-      const finishNode = grid[finishNodeRow][finishNodeCol];
+      const finishNode = grid[this.state.numRows - 2][this.state.numColumns - 2];
       const walls = horizontalMaze(grid, startNode, finishNode);
       this.animateMaze(walls);
     }, this.state.mazeSpeed);
@@ -404,14 +446,16 @@ isInside = (x, y) => {
           generatingMaze={this.state.generatingMaze}
           visualizeJPS={this.visualizeJPS.bind(this)}
           generateRandomMaze={this.generateRandomMaze.bind(this)}
-          generateRecursiveDivisionMaze={this.generateRecursiveDivisionMaze.bind(
-            this
-          )}
+          generateRecursiveDivisionMaze={this.generateRecursiveDivisionMaze.bind(this)}
           generateVerticalMaze={this.generateVerticalMaze.bind(this)}
           generateHorizontalMaze={this.generateHorizontalMaze.bind(this)}
           clearGrid={this.clearGrid.bind(this)}
           clearPath={this.clearPath.bind(this)}
           updateSpeed={this.updateSpeed.bind(this)}
+          handleNumRows={this.handleNumRows.bind(this)}
+          handleNumColumns={this.handleNumColumns.bind(this)}
+          numRows={this.state.numRows}
+          numColumns={this.state.numColumns}
         />
         {this.state.isLoading && <div><img src={loading} 
         style={{display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '5%', height: '5%'}}/></div>}
@@ -464,8 +508,8 @@ isInside = (x, y) => {
             );
             
           })}
-         </div>
-         </React.Fragment>
+        </div>
+        </React.Fragment>
       
     );
   }
@@ -476,19 +520,19 @@ const getInitialGrid = (numRows, numColumns) => {
   for (let row = 0; row < numRows; row++) {
     let currentRow = [];
     for (let col = 0; col < numColumns; col++) {
-      currentRow.push(createNode(row, col));
+      currentRow.push(createNode(row, col, numRows, numColumns));
     }
     grid.push(currentRow);
   }
   return grid;
 };
 
-const createNode = (row, col) => {
+const createNode = (row, col, numRows, numColumns) => {
   return {
     row,
     col,
     isStart: row === startNodeRow && col === startNodeCol,
-    isFinish: row === finishNodeRow && col === finishNodeCol,
+    isFinish: row === (numRows - 2) && col === (numColumns - 2),
     distance: Infinity,
     totalDistance: Infinity,
     isVisited: false,
@@ -559,5 +603,7 @@ const getVisitedNodesInOrder = (
   }
   return visitedNodesInOrder;
 };
+
+
 
 export default PathfindingVisualizer;

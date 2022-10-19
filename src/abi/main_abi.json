@@ -10,15 +10,10 @@
                 "name": "y",
                 "offset": 1,
                 "type": "felt"
-            },
-            {
-                "name": "walkable",
-                "offset": 2,
-                "type": "felt"
             }
         ],
         "name": "Point",
-        "size": 3,
+        "size": 2,
         "type": "struct"
     },
     {
