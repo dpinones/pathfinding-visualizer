@@ -1,20 +1,22 @@
-import {
-    Contract,
-    Provider,
-    } from "starknet";
-
-import JPSAbi from '../abi/main_abi.json'
+import axios from 'axios';
 
 export async function jps(startX, startY, endX, endY, grid, gridWidth, gridHeight) {
+
     const arr = convertGridToPoints(grid).map(element => String(element));
-    
-    const provider = new Provider();
-    const pathFinderAddress = "0x04474763bccfee577b1ed182e8a143d035fd25cfc984e762203a8b7c0f26df75";
-    const pathFinder = new Contract(JPSAbi, pathFinderAddress, provider);
-    const pathFinderResult = await pathFinder.path_finder(String(startX), String(startY), String(endX), String(endY), arr, String(gridWidth), String(gridHeight));
-    if(!pathFinderResult){
-        return [];
-    } else {
+    try {
+        const data = { 
+            "start_x": String(startX),
+            "start_y": String(startY),
+            "end_x": String(endX),
+            "end_y": String(endY),
+            "grid": arr,
+            "grid": arr,
+            "grid_width": String(gridWidth),
+            "grid_height": String(gridHeight)
+        };
+
+        const pathFinderResult = await axios.post('https://tu-api.com/endpoint', data);
+        console.log(pathFinderResult.data);
         if(pathFinderResult[0] === 0){
             return [];
         }
@@ -26,6 +28,8 @@ export async function jps(startX, startY, endX, endY, grid, gridWidth, gridHeigh
         })
         parsedResult.reverse();
         return parsedResult;
+    } catch (error) {
+        return [];
     }
 }
 
@@ -33,15 +37,15 @@ const convertGridToPoints = (grid) => {
     const initialGrid = [];
     let maps = '';
     for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[i].length; j++) {
-        if (grid[i][j].isWall) {
-        initialGrid.push(1);
-        maps = maps + '1,'
-        } else {
-        initialGrid.push(0);
-        maps = maps + '0,'
+        for (let j = 0; j < grid[i].length; j++) {
+            if (grid[i][j].isWall) {
+            initialGrid.push(1);
+            maps = maps + '1,'
+            } else {
+            initialGrid.push(0);
+            maps = maps + '0,'
+            }
         }
-    }
     }
     return initialGrid;
 }
